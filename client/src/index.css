@@ -1,13 +1,16 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* Import "EB Garamond" from Google Fonts */
+@import url("https://fonts.googleapis.com/css2?family=EB+Garamond&display=swap");
+
+/* Variabili globali */
+:root {
+	--font-family-base: "EB Garmond", sans-serif;
+	--color-dark-gray: rgba(40,40,40,1);
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+/* stile globale: rimuovi padding e margine */
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  scroll-behavior: smooth;
 }

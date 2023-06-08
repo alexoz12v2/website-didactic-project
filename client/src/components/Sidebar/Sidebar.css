@@ -1,0 +1,6 @@
+.app__sidebar {
+	margin: 1% 0% 1% 5%;
+	width: 20%;
+	vertical-align: center;
+	background-color: var(--color-dark-gray);
+}
