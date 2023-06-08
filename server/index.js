@@ -6,6 +6,7 @@ import cors from "cors"
 
 // TODO import routes
 import userRoutes from "./routes/user.js";
+import chatRoutes from "./routes/chat.js";
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use(cors());
 
 // TODO use routes
 app.use("/user", userRoutes);
+app.use("/chat", chatRoutes);
 
 const CONNECTION_URL = "mongodb+srv://alessio:alessio@firstdb.mxhkwcy.mongodb.net/?retryWrites=true&w=majority";
 const PORT = process.env.PORT || 5000;
