@@ -1,7 +1,7 @@
 import React from "react";
 
 import { Sidebar, Chat } from "./components/";
-import  useState from "react";
+import { useState } from "react";
 import LoginForm from "./components/LoginForm/LoginForm";
 import "./App.css";
 
@@ -20,25 +20,16 @@ const App = () => {
 	};
 	return (
 		<div className="app__background--color app__background--size">
-	     <div>
-      {isLogged ? (
-        <div>
-          <h2>Benvenuto! Sei loggato.</h2>
-          <button onClick={handleLogout}>Logout</button>
-          {/* Mostra i componenti sideBar e chat */}
-          <Sidebar />
-          <Chat />
-        </div>
-      ) : (
-        <div>
-          <h2>Effettua il login</h2>
-          <button onClick={handleLogin}>Login</button>
-          {/* Mostra il componente LoginForm */}
-          <LoginForm />
-        </div>
-      )}
-    </div>
-		
+			{isLogged ? (
+				<>
+					<Sidebar />
+					<Chat />
+				</>
+			) : (
+				<>
+					<LoginForm />
+				</>
+			)}
 		</div>
 	);
 };
