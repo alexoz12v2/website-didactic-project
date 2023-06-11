@@ -7,8 +7,18 @@ import "./LoginForm.css";
 // TODO password criptata
 // TODO cambia il post action nel form
 const LoginForm = () => {
-	const google = () => {};
-	const github = () => {};
+	const BACKEND_URL = "http://localhost:5000";
+	// TODO refactor to one function
+	const google = () => {
+		// fai la richiesta di autenticazione tramite google alla route del backend che ha come middleware 
+		// passport.authenticate("google", { scope: ["profile"] });
+		// ma non la puoi fare direttamente dal frontend
+		window.open(`${BACKEND_URL}/auth/google`, "_self");
+	};
+
+	const github = () => {
+		window.open(`${BACKEND_URL}/auth/github`, "_self");
+	};
 
 	return (
 		<div className="app__chatbox">
