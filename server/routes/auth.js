@@ -1,6 +1,8 @@
 "use strict";
 import { Router } from "express";
 import passport from "passport";
+import { config } from "dotenv";
+config();
 
 const router = Router();
 
@@ -25,6 +27,13 @@ router.get("/login/success", (req, res) => {
 	}
 });
 
+router.get("/logout", (req, res, next) => {
+	req.logout(err => {
+		if (err) { return next(err); }
+		res.redirect(process.env.FRONTEND_URL);
+	});
+});
+
 // -------------------------- google routes -----------------------------------
 // dovrebbe essere post se usi forms con post
 router.get("/google", passport.authenticate("google", {
@@ -33,7 +42,7 @@ router.get("/google", passport.authenticate("google", {
 
 // url a cui sei rediretto dopo accesso google, configurato da oauth20
 router.get("/google/callback", passport.authenticate("google", {
-	successRedirect: "http://localhost:3000", // vai a homepage di client
+	successRedirect: process.env.FRONTEND_URL, // vai a homepage di client
 	failureRedirect: "/login/failed",
 }));
 
@@ -44,7 +53,7 @@ router.get("/github", passport.authenticate("github", {
 }));
 
 router.get("/github/callback", passport.authenticate("github", {
-	successRedirect: "http://localhost:3000", // vai a homepage di client
+	successRedirect: process.env.FRONTEND_URL, // vai a homepage di client
 	failureRedirect: "/login/failed",
 }));
 

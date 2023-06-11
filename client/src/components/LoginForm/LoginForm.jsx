@@ -13,6 +13,7 @@ const LoginForm = () => {
 		// fai la richiesta di autenticazione tramite google alla route del backend che ha come middleware 
 		// passport.authenticate("google", { scope: ["profile"] });
 		// ma non la puoi fare direttamente dal frontend
+		// user { displayName, name { familyName, givenName } id, photos [{value},...] }
 		window.open(`${BACKEND_URL}/auth/google`, "_self");
 	};
 
