@@ -10,3 +10,25 @@
 	position: absolute;
 	display: flex;
 }
+
+.app__main-window {
+	display: flex;
+	flex-direction: column;
+	margin: 1% 5% 1% 0;
+	width: 100%;
+	background-color: orange;
+}
+.app__chatbox {
+	background-color: white;
+	flex: 1;
+}
+
+.app__main-window-header {
+	height: var(--header-height);
+}
+
+.link {
+  color: inherit; /*no anchor special color*/
+  text-decoration: none; /*no underline*/
+}
+

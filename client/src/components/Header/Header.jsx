@@ -1,16 +1,22 @@
 import React from "react";
 
-import Profile from "../Profile/Profile";
-import OptionList from "../OptionList/OptionList";
+// TODO remove
+import profileIcon from "../../assets/profile_icon_placeholder.jpg";
 
 import "./Header.css";
 
-const Header = () => {
+const Header = ({ user }) => {
 
 	return (
 		<div className="app__sidebar-header">
-		<Profile />
-		<OptionList />
+		{ user ? (
+			<div className="app__sidebar-header-prifile-wrapper">
+				<img src={profileIcon} alt="profileIcon" className="app__sidebar-header-profile-icon--size app__icon" />
+				{user?.displayName}
+			</div>
+		) : (
+			<div className="app__sidebar-header-login">Login</div>
+		) }
 		</div>
 	);
 };
