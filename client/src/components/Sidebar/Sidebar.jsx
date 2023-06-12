@@ -6,10 +6,10 @@ import "./Sidebar.css";
 const Sidebar = ({ user }) => {
 
 	return (
-		<div className="app__sidebar">
+		<aside className="app__sidebar">
 			<Header user={user}/>
 			<Contacts user={user}/>
-		</div>
+		</aside>
 	);
 };
 

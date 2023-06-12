@@ -5,7 +5,6 @@
 :root {
 	--font-family-base: "EB Garmond", sans-serif;
 	--color-dark-gray: rgba(40,40,40,1);
-	--header-height: 5%;
 }
 
 /* stile globale: rimuovi padding e margine */

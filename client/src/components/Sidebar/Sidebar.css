@@ -1,6 +1,6 @@
 .app__sidebar {
-	margin: 1% 0% 1% 5%;
-	width: 20%;
-	vertical-align: center;
+	display: flex;
+	flex-direction: column;
 	background-color: var(--color-dark-gray);
+	grid-row-end: span 2;
 }

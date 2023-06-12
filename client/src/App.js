@@ -1,10 +1,11 @@
 import { Sidebar, Chat, LoginForm } from "./components/";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Navigate, Outlet } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 import "./App.css";
 
 // TODO create pages folder
+// TODO Typography
 const App = () => {
 	const [user, setUser] = useState(null);
 
@@ -31,17 +32,35 @@ const App = () => {
 		getUser();
 	}, []);
 
-	return (
-		<div className="app__background--color app__background--size">
-			<Sidebar user={user}/>
-			<main className="app__main-window">
+	const router = createBrowserRouter([
+		{
+			path: "/",
+			element: (
+				<>
+				<Sidebar user={user}/>
 				<header className="app__main-window-header">
 					header
 				</header>
-				<Routes>
-					<Route path="/" element={<Chat />} />
-					<Route path="/login" element={user ? <Navigate to="/" /> : <LoginForm />} />
-				</Routes>
+				<Outlet />
+				</>
+			),
+			children: [
+				{
+					path: "/",
+					element: (<Chat />),
+				},
+				{
+					path: "/login",
+					element: user ? (<Navigate to="/" />) : (<LoginForm />),
+				}
+			],
+		},
+	]);
+
+	return (
+		<div className="app__background--color app__background--size">
+			<main className="app__main-window">
+				<RouterProvider router={router}/>
 			</main>
 		</div>
 	);

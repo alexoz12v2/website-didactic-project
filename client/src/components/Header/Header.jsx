@@ -4,6 +4,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 
 import "./Header.css";
 
+// TODO non usare l'informazione di google account direttamente, usa la roba di oauth per creare un 
 const Header = ({ user }) => {
 	const BACKEND_URL = "http://localhost:5000";
 	const logout = () => {
