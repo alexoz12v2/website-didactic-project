@@ -57,6 +57,8 @@ const Authentication = ({setUser}) => {
 			  		<input type="text" name="email" placeholder="Email" />
 			  		<input type="password" name="password" placeholder="Password" />
 					<input type="submit" name="login" className="submit" value="Login" style={{cursor: "pointer"}}/>
+					<input type="file" accept="image/*" name="avatar" />
+					<label>Gimme stuff</label>
 				</NonceForm>
 				UM8v0SX6pm
 		  	</div>
