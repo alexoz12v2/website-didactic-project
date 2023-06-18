@@ -1,0 +1,21 @@
+.app__chatbox {
+	display: flex;
+	flex-direction: column;
+}
+
+.app__chatbox > form {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.app__chatbox input[name="message"] {
+	height: 80%;
+	width: 70%;
+	overflow: scroll;
+}
+
+.app__chatbox input[name="send"] {
+	border-radius: 100%;
+	height: 15%;
+}

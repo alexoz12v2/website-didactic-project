@@ -6,7 +6,12 @@ const Chat = () => {
 
 	return (
 		<div className="app__chatbox">
-			<h1>Chat Box</h1>
+			<main style={{backgroundColor: "violet", height: "90%"}}>
+			</main>
+			<form style={{backgroundColor: "blue", flex: 1,}}>
+				<input type="text" name="message" placeholder="type your message" />
+				<input type="submit" name="send" value="cliccami" />
+			</form>
 		</div>
 	);
 };
