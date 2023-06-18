@@ -1,8 +1,19 @@
 "use strict";
-import mongoose from "mongoose";
-const Schema = mongoose.Schema;
+import mongoose, { Schema } from "mongoose";
+import passportLocalMongoose from "passport-local-mongoose";
 
 const userSchema = new Schema({
+	//email: {
+	//	type: String,
+	//	required: true,
+	//	unique: true,
+	//	match: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
+	//},
+	//hashedPassword: {
+	//	type: String,
+	//	required: true,
+	//	minLength: 8,
+	//},
 	name: {
 		first: {
 			type: String,
@@ -14,8 +25,8 @@ const userSchema = new Schema({
 		last: { 
 			type: String,
 			lowercase: true,
-			required: true,
-			minLength: 1,
+			//required: true, // TODO github profile non ha nome e cognome obbligatori. Uso allora username come first e "" come last
+			//minLength: 1,
 			trim: true,
 		},
 	},
@@ -37,6 +48,17 @@ const userSchema = new Schema({
 	// collection: "users", // uncomment se vuoi customizzare nome collection (default e' versione plurale lowercase del primo argomento di model())
 });
 
+// mongoose docs: schema plugins sono una feature che permette l'aggiunta di logica comune a piu 
+// schemas, eg popolarli con proprieta comuni. in particolare, l'argomento di plugin e' una 
+// function (schema, options). passpostLocalMongoose e' un hook definito da riga 8 in
+// https://github.com/saintedlama/passport-local-mongoose/blob/main/index.js
+const options = {
+	saltlen: process.env.SALT_LEN,
+	usernameField: "email",
+	hashField: "hashedPassword",
+};
+userSchema.plugin(passportLocalMongoose, options);
+console.log(userSchema)
 const userModel = mongoose.model("User", userSchema);
 
 export default userModel;

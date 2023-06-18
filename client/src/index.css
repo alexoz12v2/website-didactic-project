@@ -18,3 +18,9 @@
 .app__icon {
 	border-radius: 100%;
 }
+
+/* prevenire che, in qualche modo, le immagini facciano overflow */
+img {
+	max-width: 100%;
+	display: block;
+}

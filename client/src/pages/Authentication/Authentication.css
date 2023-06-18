@@ -97,17 +97,3 @@ input.submit {
 	justify-content: flex-end;
 	flex-direction: column;
 }
-
-label {
-  width: 60%;
-  padding: 15px 20px;
-  margin-bottom: 40px;
-  font-size: 18px;
-  background-color: rgba(128, 0, 128, 0.671);
-  color: white;
-  font-weight: bold;
-  border: none;
-  border-radius: 5px;
-  text-align: center;
-}
-
