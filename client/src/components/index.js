@@ -1,4 +1,4 @@
 import Sidebar from "./Sidebar/Sidebar";
-import Chat from "./Chat/Chat";
+import NonceForm from "./NonceForm/NonceForm";
 
-export { Chat, Sidebar };
+export { Sidebar, NonceForm };

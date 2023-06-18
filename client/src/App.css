@@ -10,3 +10,28 @@
 	position: absolute;
 	display: flex;
 }
+
+.app__main-window {
+	display: grid;
+	grid-template-columns: 14% auto;
+	grid-template-rows: 5% auto;
+
+	margin: auto auto;
+	width: 85%;
+	height: 95%;
+
+}
+
+.app__chatbox {
+	background-color: white;
+}
+
+.app__main-window-header {
+	background-color: orange;
+}
+
+.link {
+	color: inherit; /*no anchor special color*/
+	text-decoration: none; /*no underline*/
+}
+
