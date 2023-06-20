@@ -9,10 +9,14 @@
 	align-items: center;
 }
 
-.app__chatbox input[name="message"] {
+.app__chatbox [name="message"] {
 	height: 80%;
 	width: 70%;
-	overflow: scroll;
+	resize: none;
+}
+
+.app__chatbox [name="message"]::placeholder {
+	color: red;
 }
 
 .app__chatbox input[name="send"] {

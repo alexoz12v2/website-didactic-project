@@ -1,10 +1,12 @@
 "use strict";
 import express from "express";
 
-import { getUsers } from "../controllers/user.js";
+import { getUsers, decryptEmail, sendFriend } from "../controllers/user.js";
 
 const router = express.Router();
 
 router.get("/all", getUsers);
+
+router.get("/email", decryptEmail, sendFriend);
 
 export default router;

@@ -21,11 +21,6 @@ const { keyJWK, privateKey } = (() => {
     });
 
     const keyJWK = pem2jwk(publicKey);
-    console.log(keyJWK);
-
-    // TODO remove 
-    console.log(privateKey);
-    console.log(pem2jwk(privateKey));
     
     return { keyJWK, privateKey };
 })();

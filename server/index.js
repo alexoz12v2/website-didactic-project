@@ -21,6 +21,7 @@ import "./passport.js";
 import userRoutes from "./routes/user.js";
 import chatRoutes from "./routes/chat.js";
 import authRoutes from "./routes/auth.js";
+import apiRoutes from "./routes/api.js";
 
 function createServer() {
     const app = express();
@@ -46,7 +47,9 @@ function createServer() {
     app.enable('trust proxy');
     app.use(expressEnforcesSSL());
 
-    app.use(helmet());
+    app.use(helmet({
+      crossOriginResourcePolicy: false,
+    }));
 
     // dice a richieste che arrivano in https di continuare a usare solo https
     app.use(hsts({
@@ -95,6 +98,7 @@ function createServer() {
     app.use("/user", userRoutes);
     app.use("/chat", chatRoutes);
     app.use("/auth", authRoutes);
+    app.use("/api", apiRoutes);
 
     // error handler globale
     app.use((err, req, res, next) => {

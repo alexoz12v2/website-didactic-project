@@ -1,45 +1,79 @@
 import { createBrowserRouter, RouterProvider, Navigate, Outlet } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useEffect, useReducer } from "react";
 
 import { Sidebar } from "./components/";
 import { Chat, Profile, Authentication, Home } from "./pages/";
 import { getUser } from "./api/";
+import { Store } from "./AppContext";
 
 import "./App.css";
+const reducer = (state, action) => {
+	switch (action.type) {
+		case "login":
+			return {
+				user: action.payload.user || state.user,
+				token: action.payload.token || state.token,
+			};
+		case "token":
+			return {
+				...state,
+				token: action.payload.token || state.token,
+			};
+		default: 
+			return state;
+	}
+};
 
-// TODO create pages folder
-// TODO Typography
-// TODO se passi funzioni a nested components, usa useCallback
-// TODO useRef: stato che non e' renderizzato, quindi il compoenente non deve essere rerenderizzato
-// TODO useMemo per computazione pesante. Eg. filtrare lista di messaggi basata su visibility
 const App = () => {
 	// TODO refactor in reducer + context 
-	const [user, setUser] = useState(null);
+	const [state, dispatch] = useReducer(reducer, {
+		user: null,/*{
+				name: {
+					first: null,
+					last: null,
+				},
+				email: null,
+				avatar: null,
+				friends: [],
+		},*/
+		token: null,
+	});
 
 	useEffect(() => {
 		getUser().then(response => {
 			if (response.status !== 200) 
 				throw new Error("authentication failed!");
 
-			console.log("authentication:");
-			console.log(response);
-			setUser(() => response.data.user);
+			dispatch({type: "login", payload: {
+				user: response.data.user,
+				token: response.data.token,
+			}});
 		}).catch((err) => {
 			console.log(err);
 		});
 	}, []);
 
+	const chatElement = () => {
+		if (state.user) {
+			console.log(`render! ${!!state.user}`)
+			return (<Chat />) 
+		}
+		else {
+			return (<Navigate to="/" />);
+		}
+	}
+
 	const router = createBrowserRouter([
 		{
 			path: "/",
 			element: (
-				<>
-				<Sidebar user={user}/>
+				<Store.Provider value={{state, dispatch}}>
+				<Sidebar />
 				<header className="app__main-window-header">
 					header
 				</header>
 				<Outlet />
-				</>
+				</Store.Provider>
 			),
 			children: [
 				{
@@ -48,15 +82,15 @@ const App = () => {
 				},
 				{
 					path: "/chat",
-					element: user ? (<Navigate to="/" />) : (<Chat />),
+					element: chatElement(),
 				},
 				{
 					path: "/profile",
-					element: user ? (<Navigate to="/" />) : (<Profile />),
+					element: state.user ? (<Profile />) : (<Navigate to="/" />),
 				},
 				{
 					path: "/login",
-					element: user ? (<Navigate to="/" />) : (<Authentication setUser={setUser}/>),
+					element: state.user ? (<Navigate to="/" />) : (<Authentication />),
 				}
 			],
 		},

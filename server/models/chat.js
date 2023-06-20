@@ -14,7 +14,7 @@ const messageSchema = new Schema({
 
 const chatSchema = new Schema({
 	// utenti interlocutori. Nota: se fai override della proprieta' _id, la devi settare manualmente
-	_id: {
+	id: {
 		type: [{
 			type: Schema.Types.ObjectId,
 			ref: "User",
@@ -23,7 +23,7 @@ const chatSchema = new Schema({
 		required: true,
 	},
 	messages: [messageSchema],
-});
+}, { _id: false, });
 
 const ChatModel = mongoose.model("Chat", chatSchema);
 

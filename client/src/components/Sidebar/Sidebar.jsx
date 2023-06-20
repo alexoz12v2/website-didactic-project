@@ -1,12 +1,14 @@
 import HomeIcon from '@mui/icons-material/Home';
+import { useNavigate } from "react-router-dom";
 
 import Header from "../Header/Header";
 import Contact from "../Contact/Contact";
 import "./Sidebar.css";
 
 const Sidebar = ({ user }) => {
+	const navigate = useNavigate();
 	const goHome = e => {
-		window.open("/", "_self");
+		navigate("/");
 	};
 
 	return (

@@ -9,7 +9,7 @@ const NonceForm = (props) => {
 		formEvent.stopPropagation();
 
 		// TODO work in progress
-		const formData = new FormData(formEvent.target, formEvent.target.querySelector("input[type='submit']"));
+		let formData = new FormData(formEvent.target, formEvent.target.querySelector("input[type='submit']"));
 		const encoder = new TextEncoder("utf8");
 		console.log(formData.values());
 		
@@ -23,12 +23,9 @@ const NonceForm = (props) => {
 
 			for (const [name, value] of formData) {
 				if (value instanceof File) {
-					const fileContents = new Uint8Array(await value.arrayBuffer());
-					const fileb64 = uint8ToBase64(fileContents);
-					console.log(fileb64);
 					fileData.push({});
 					fileData[j].name = name;
-					fileData[j].value = fileb64;
+					fileData[j].value = value;
 					j++;
 				} else {
 					inputData.push({});
@@ -48,16 +45,25 @@ const NonceForm = (props) => {
 			encryptedData = new Uint8Array(encryptedData);
 
 			const b64encoded = uint8ToBase64(encryptedData);
-			console.log(b64encoded);
 
-			const postData = {
-				encryptedText: b64encoded,
-				plainFiles: fileData,
-			};
-			console.log(postData);
+			formData = new FormData();
+			formData.append("encryptedText", b64encoded);
 
-			throw new Error("dsf");
-			await postCallback(b64encoded);
+			for (const {name, value} of fileData) {
+				if (!(value instanceof File)) 
+					throw new Error("what");
+
+				formData.append(name, value);
+			}
+
+			for (const [name, value] of formData) {
+				console.log(name);
+				console.log(value);
+			}
+
+			//throw new Error("dsf");
+			//await postCallback(b64encoded);
+			await postCallback(formData);
 		} catch (err) {
 			console.error(err);
 		}

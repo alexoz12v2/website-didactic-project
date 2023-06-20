@@ -3,10 +3,15 @@ import { Router } from "express";
 import passport from "passport";
 import { config } from "dotenv";
 config();
-import { privateDecrypt, constants as cryptoConstants } from "crypto";
-import { publicKey, privateKey } from "../keypair.js";
+import multer, { diskStorage } from "multer";
 
-import { createUser, sendUser } from "../controllers/user.js";
+import { publicKey } from "../keypair.js";
+import { 
+	createUser, 
+	sendUser, 
+	decryptTextDataUser, 
+	uploadAvatarUser 
+} from "../controllers/user.js";
 
 const router = Router();
 
@@ -55,32 +60,41 @@ router.get("/github/callback", passport.authenticate("github", {
 }));
 
 // ------------------------- local routes -------------------------------------
-router.post("/login", 
-	(req, res, next) => {
-		const key = { 
-			key: privateKey, 
-			padding: cryptoConstants.RSA_PKCS1_OAEP_PADDING,
-			//padding: cryptoConstants.RSA_NO_PADDING,
-			oaepHash: 'sha256', 
-		};
-		const decryptedData = privateDecrypt(key, Buffer.from(req.body.b64data, "base64"));
-		// decode buffer in [{"name":"username","value":"<unknown>"},{"name":"password","value":"<unknown>"},{"name":"login","value":"Login"}] and remove the login button
-		const decryptedObj = JSON.parse(decryptedData.toString("utf-8"));
-		decryptedObj.pop();
-		decryptedObj.forEach(elem => {
-			req.body[elem.name] = elem.value;
-		});
-		delete req.body.b64data;
-		console.log(req.body);
-
-		//res.set('Access-Control-Allow-Origin', 'https://localhost:3000'); <-- setting headers before a redirect doesn't work
-		next();
+// TODO se ce la fai col tempo scrivi una custom "MongoStorage", per non fare che prima li salvi
+// su disco e poi su MongoDB
+const storage = diskStorage({
+	// function which determines where the files should be stored
+	destination: (req, file, cb) => {
+		cb(null, `./tmp/images`);
 	},
+	// function to determine what the file should be named
+	filename: (req, file, cb) => {
+		const suffix = Date.now() + "-" + Math.round(Math.random() * 1e9); // from docs
+		cb(null, file.fieldname + "-" + suffix);
+	},
+});
+
+const imageFilter = (req, file, cb) => {
+	if (file.mimetype.includes("image"))
+		cb(null, true);
+	else
+		cb(null, false);
+};
+
+const upload = multer({
+	storage: storage,
+	fileFilter: imageFilter,
+});
+
+router.post("/login", 
+	upload.single("avatar"), // TODO remove, in register text fields in req.body, image in req.file
+	decryptTextDataUser,
+	uploadAvatarUser, // TODO remove, put in register
 	passport.authenticate("local", {
 		successRedirect: "/auth/login/success", // non va diretto al frontend perche res.redirect + withCredentials(axios) = true non funziona, perche in richieste redirected tutti gli headers (inclusi i cors) sono rimossi, fallendo la GET alla homepage per cors
 		failureRedirect: "/auth/login/failed",
 		failureMessage: true,
-	})
+	}),
 );
 
 router.post("/register", createUser);

@@ -30,6 +30,12 @@ const userSchema = new Schema({
 			trim: true,
 		},
 	},
+	avatar: {
+		id: Schema.Types.ObjectId,
+		data: Buffer,
+		byteCount: Number,
+		contentType: String,
+	},
 	friends: [
 		{ type: Schema.Types.ObjectId, ref: "User" }
 	],
@@ -58,7 +64,7 @@ const options = {
 	hashField: "hashedPassword",
 };
 userSchema.plugin(passportLocalMongoose, options);
-console.log(userSchema)
+
 const userModel = mongoose.model("User", userSchema);
 
 export default userModel;

@@ -1,9 +1,11 @@
 import { useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 
-import { postCredentials } from "../../api/";
+import { postCredentials, getUser } from "../../api/";
 import { NonceForm } from "../../components/";
 
 import { BACKEND_URL } from "../../constants.js";
+import { useStore } from "../../AppContext";
 
 import Google from "../../assets/google.png";
 import GitHub from "../../assets/github.png";
@@ -13,8 +15,8 @@ import "./Authentication.css";
 // TODO password criptata
 // TODO cambia il post action nel form
 // TODO refactor prop
-const Authentication = ({setUser}) => {
-	// TODO refactor to one function
+const Authentication = () => {
+	const { state, dispatch } = useStore();
 	const redirect = (toUrl) => { // fai la richiesta di autenticazione tramite google alla route del backend che ha come middleware 
 		// passport.authenticate("google", { scope: ["profile"] });
 		// ma non la puoi fare direttamente dal frontend
@@ -22,16 +24,24 @@ const Authentication = ({setUser}) => {
 		return () => window.open(`${BACKEND_URL}/${toUrl}`, "_self");
 	};
 
-	const postCallback = useCallback(async (encryptedData) => {
+	const navigate = useNavigate();
+
+	const postCallback = useCallback(async (formData) => {
 		try {
-			const response = await postCredentials(encryptedData);
-			console.log(response);
-			setUser(() => response.data.user);
-			window.open("/", "_self");
+			await postCredentials(formData);
+			const response = await getUser();
+
+			dispatch({type: "login", payload: {
+				user: response.data.user,
+				token: response.data.token,
+			}});
+			console.log(state)
+
+			navigate("/");
 		} catch (err) {
 			console.error(err);
 		}
-	}, [setUser]);
+	}, [state, dispatch, navigate]);
 	console.log("rendering component");
 
 	return (
@@ -52,7 +62,6 @@ const Authentication = ({setUser}) => {
 			  		<div className="line" />
 			  		<div className="or">OR</div>
 				</div>
-				{/* rifare con il nonce */}
 				<NonceForm postCallback={postCallback} className="app__login-right-box">
 			  		<input type="text" name="email" placeholder="Email" />
 			  		<input type="password" name="password" placeholder="Password" />

@@ -1,16 +1,23 @@
-import React from "react";
+import { useNavigate } from "react-router-dom";
 
-import "./Contact.css"
+// import { useStore } from "../../AppContext";
 
-const Contact = ({ user }) => {
+import "./Contact.css";
+
+// TODO work with store
+const Contact = ({user}) => {
+	const navigate = useNavigate();
+	//const { state } = useStore();
 	const callback= e => {
-		window.open("/chat", "_self"); //TODO solo se sei loggato
+		navigate("/chat");
 	};
 
 	return (
 		<div className="contact" onClick={callback}>
 			<img className="contact__image" src={user.avatar} alt="profileIcon" />
-			<span className="contact__name" >{user.name.first + " " + user.name.last}</span>
+			<span className="contact__name" >
+				{user.name.first + " " + user.name.last}
+			</span>
 		</div>
 	);
 };
