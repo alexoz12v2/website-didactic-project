@@ -70,7 +70,7 @@ const App = () => {
 				<Store.Provider value={{state, dispatch}}>
 				<Sidebar />
 				<header className="app__main-window-header">
-					header
+					BuddyBuzz
 				</header>
 				<Outlet />
 				</Store.Provider>
