@@ -2,7 +2,7 @@ import { createBrowserRouter, RouterProvider, Navigate, Outlet } from "react-rou
 import { useEffect, useReducer } from "react";
 
 import { Sidebar } from "./components/";
-import { Chat, Profile, Authentication, Home } from "./pages/";
+import { Chat, Profile, Authentication, Home, Register } from "./pages/";
 import { getUser } from "./api/";
 import { Store } from "./AppContext";
 
@@ -89,8 +89,24 @@ const App = () => {
 					element: state.user ? (<Profile />) : (<Navigate to="/" />),
 				},
 				{
-					path: "/login",
-					element: state.user ? (<Navigate to="/" />) : (<Authentication />),
+					path: "/a",
+					element: (
+						<div className="app__chatbox">
+							<div className="app__auth-wrapper">
+								<Outlet />
+							</div>
+						</div>
+					),
+					children: [
+						{
+							path: "/a/login",
+							element: state.user ? (<Navigate to="/" />) : (<Authentication />),
+						},
+						{
+							path: "/a/register",
+							element: state.user ? (<Navigate to="/" />) : (<Register />),
+						}
+					]
 				}
 			],
 		},
@@ -106,3 +122,4 @@ const App = () => {
 };
 
 export default App;
+

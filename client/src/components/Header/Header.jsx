@@ -24,7 +24,7 @@ const Header = () => {
 			<LogoutIcon sx={{marginLeft: "auto", marginRight: "5%", cursor: "pointer"}} onClick={logout}/>
 			</>
 		) : (
-			<Link to="/login" className="app__sidebar-header-login">Login</Link>
+			<Link to="/a/login" className="app__sidebar-header-login">Login</Link>
 		) }
 		</div>
 	);

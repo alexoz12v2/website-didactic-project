@@ -1,7 +1,7 @@
 "use strict";
 import express from "express";
 
-import { getUsers, decryptEmail, sendFriend } from "../controllers/user.js";
+import { getUsers, decryptEmail, sendFriend, decryptTextDataUser, createUser, uploadAvatarUser, sendUser } from "../controllers/user.js";
 
 const router = express.Router();
 

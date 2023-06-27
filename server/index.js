@@ -90,7 +90,7 @@ function createServer() {
 	process.env.SESSION_KEY,
 	["POST","PUT","PATCH","DELETE"], // metodi in cui ci vuole CSRF protection
 	["/auth/login", "/auth/register"], // da escludere nel controllo
-	[process.env.FRONTEND_URL + "/login", process.env.FRONTEND_URL + "/register"], // referers esclusi (urls da cui proviene richiesta). Essi non generano e non vedono il token
+	[process.env.FRONTEND_URL + "/a/login", process.env.FRONTEND_URL + "/a/register"], // referers esclusi (urls da cui proviene richiesta). Essi non generano e non vedono il token
     ));
 
     app.use(passport.initialize());

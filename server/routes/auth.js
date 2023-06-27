@@ -87,9 +87,8 @@ const upload = multer({
 });
 
 router.post("/login", 
-	upload.single("avatar"), // TODO remove, in register text fields in req.body, image in req.file
+	upload.single(""), // TODO remove, in register text fields in req.body, image in req.file
 	decryptTextDataUser,
-	uploadAvatarUser, // TODO remove, put in register
 	passport.authenticate("local", {
 		successRedirect: "/auth/login/success", // non va diretto al frontend perche res.redirect + withCredentials(axios) = true non funziona, perche in richieste redirected tutti gli headers (inclusi i cors) sono rimossi, fallendo la GET alla homepage per cors
 		failureRedirect: "/auth/login/failed",
@@ -97,7 +96,17 @@ router.post("/login",
 	}),
 );
 
-router.post("/register", createUser);
+router.post("/register", 
+	upload.single("avatar"), // TODO remove, in register text fields in req.body, image in req.file
+	decryptTextDataUser, 
+	createUser, 
+	uploadAvatarUser, 
+	passport.authenticate("local", {
+		successRedirect: "/auth/login/success", // non va diretto al frontend perche res.redirect + withCredentials(axios) = true non funziona, perche in richieste redirected tutti gli headers (inclusi i cors) sono rimossi, fallendo la GET alla homepage per cors
+		failureRedirect: "/auth/login/failed",
+		failureMessage: true,
+	})
+);
 
 router.get("/register/nonce", (req, res, next) => {
 	res.status(200).json({ 

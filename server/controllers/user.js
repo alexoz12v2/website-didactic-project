@@ -23,25 +23,27 @@ export const getUsers = async (req, res) => {
 
 export const createUser = async (req, res, next) => {
 	// TODO req.body.data dovrebbe essere creato dal form
-	const key = {
-		key: privateKey,
-		passphrase: process.env.KEY_PASS,
-	};
+	//const key = {
+	//	key: privateKey,
+	//	passphrase: process.env.KEY_PASS,
+	//};
 
-	const userData = privateDecrypt(req.body.data, key);
+	//const userData = privateDecrypt(req.body.data, key);
+	
+	console.log("///////////////////////////////////////////////////////////////////////////");
+	console.log(req.body);
 	// aggiunta da passport-local-mongoose. TODO avatar
 	try {
 		await User.register(new User({
-			email: userData.email,
-			name: { first: userData.firstName, last: req.body.lastName },
+			email: req.body.email,
+			name: { first: req.body.nome, last: req.body.cognome },
 			friends: [],
-		}), userData.password);
-
-		res.redirect(process.env.FRONTEND_URL);
+		}), req.body.password);
 	} catch(err) {
 		console.error(err);
 		next(err);
 	}
+	next();
 };
 
 export const sendUser = async (req, res, next) => {
@@ -146,8 +148,11 @@ export const uploadAvatarUser = async (req, res, next) => {
 	// multer.upload.single("avatar") middleware e' stata inserita
 	let imageHandle;
 	try {	
+		console.log("fdsokafjkslafhdslsdjkafhjdksfhdjklsafhdjksafh");
 		imageHandle = await open(`${req.file.path}`, "r");
 		const { buffer } = await imageHandle.read();
+		console.log("buffer read:");
+		console.log(buffer);
 		const userDoc = await User.findByUsername(req.body.email);
 		if (!userDoc)
 			throw new Error(`UploadAvatarUser: User ${req.body.email} doesn't exists`);
@@ -168,6 +173,7 @@ export const uploadAvatarUser = async (req, res, next) => {
 };
 
 export const decryptTextDataUser = (req, res, next) => {
+	console.log("vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv");
 	const key = { 
 		key: privateKey, 
 		padding: cryptoConstants.RSA_PKCS1_OAEP_PADDING,
@@ -177,7 +183,7 @@ export const decryptTextDataUser = (req, res, next) => {
 	const decryptedData = privateDecrypt(key, Buffer.from(req.body.encryptedText, "base64"));
 	// decode buffer in [{"name":"username","value":"<unknown>"},{"name":"password","value":"<unknown>"},{"name":"login","value":"Login"}] and remove the login button
 	const decryptedObj = JSON.parse(decryptedData.toString("utf-8"));
-	decryptedObj.pop();
+	console.log(decryptedObj);
 	decryptedObj.forEach(elem => {
 		req.body[elem.name] = elem.value;
 	});

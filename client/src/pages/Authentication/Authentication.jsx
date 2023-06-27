@@ -45,33 +45,35 @@ const Authentication = () => {
 	console.log("rendering component");
 
 	return (
-		<div className="app__chatbox">
-			<div className="app__login-wrapper">
-				<h1 className="app__login-title">Choose a Login Method</h1>
-				<div className="app__login-left-box">
-					<div className="app__login-button google" onClick={redirect("auth/google")}>
-						<img src={Google} alt="" className="icon" />
-						Google
-			  		</div>
-			  		<div className="app__login-button github" onClick={redirect("auth/github")}>
-						<img src={GitHub} alt="" className="icon" />
-						Github
-			  		</div>
+		<>
+			<h1 className="app__login-title">Choose a Login Method</h1>
+			<div className="app__login-left-box">
+				<div className="app__login-button google" onClick={redirect("auth/google")}>
+					<img src={Google} alt="" className="icon" />
+					Google
 				</div>
-				<div className="app__login-center-box">
-			  		<div className="line" />
-			  		<div className="or">OR</div>
+				<div className="app__login-button github" onClick={redirect("auth/github")}>
+					<img src={GitHub} alt="" className="icon" />
+					Github
 				</div>
-				<NonceForm postCallback={postCallback} className="app__login-right-box">
-			  		<input type="text" name="email" placeholder="Email" />
-			  		<input type="password" name="password" placeholder="Password" />
-					<input type="submit" name="login" className="submit" value="Login" style={{cursor: "pointer"}}/>
-					<input type="file" accept="image/*" name="avatar" />
-					<label>Gimme stuff</label>
-				</NonceForm>
-				UM8v0SX6pm
-		  	</div>
-		</div>
+			</div>
+			<div className="app__login-center-box">
+				<div className="line" />
+				<div className="or">OR</div>
+			</div>
+			<NonceForm postCallback={postCallback} className="app__login-right-box">
+				<input type="text" name="email" placeholder="Email" />
+				<input type="password" name="password" placeholder="Password" />
+				<input type="submit" name="login" className="submit" value="Login" style={{cursor: "pointer"}}/>
+			</NonceForm>
+			{/*UM8v0SX6pm*/}
+			<div style={{
+				gridColumnStart:1,
+				gridColumnEnd:3,
+			}}>
+				Non sei ancora registrato? <span onClick={e => { navigate("/a/register"); }}className="app__register_button--color">Registrati</span>
+			</div>
+		</>
 	);
 };
 

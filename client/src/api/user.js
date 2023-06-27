@@ -47,3 +47,14 @@ export function getUserInfoByEmail(encryptedEmail) {
 		},
 	});
 };
+
+export function postNewUserData(formData) {
+	return axios.post(`${BACKEND_URL}/auth/register`, formData, {
+		headers: {
+			"Content-Type": "multipart/form-data",
+		},
+		responseType: "json",
+		withCredentials: true,
+	});
+};
+

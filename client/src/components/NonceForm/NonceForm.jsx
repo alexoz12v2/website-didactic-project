@@ -2,11 +2,21 @@ import { encode as uint8ToBase64 } from "uint8-to-base64";
 import { getNonce } from "../../api/";
 
 const NonceForm = (props) => {
-	const { postCallback, children, ...restProps } = props;
+	const { postCallback, children, prePostHook, ...restProps } = props;
 
 	const callback = async (formEvent) => {
 		formEvent.preventDefault();
 		formEvent.stopPropagation();
+
+		if (prePostHook)
+		{
+			const { ok } =  prePostHook(formEvent);
+			if (!ok)
+			{
+				console.log("prePostHook not ok");
+				return;
+			}
+		}
 
 		// TODO work in progress
 		let formData = new FormData(formEvent.target, formEvent.target.querySelector("input[type='submit']"));
@@ -63,9 +73,10 @@ const NonceForm = (props) => {
 
 			//throw new Error("dsf");
 			//await postCallback(b64encoded);
+			
 			await postCallback(formData);
 		} catch (err) {
-			console.error(err);
+			console.error(err.message);
 		}
 	};
 

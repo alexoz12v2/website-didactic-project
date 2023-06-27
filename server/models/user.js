@@ -59,7 +59,7 @@ const userSchema = new Schema({
 // function (schema, options). passpostLocalMongoose e' un hook definito da riga 8 in
 // https://github.com/saintedlama/passport-local-mongoose/blob/main/index.js
 const options = {
-	saltlen: process.env.SALT_LEN,
+	saltlen: Number(process.env.SALT_LEN),
 	usernameField: "email",
 	hashField: "hashedPassword",
 };
