@@ -10,7 +10,8 @@ import {
 	uploadAvatarUser, 
 	sendUser, 
 	addFriend, 
-	sendFriends 
+	sendFriends,
+	removeFriend,
 } from "../controllers/user.js";
 
 const router = express.Router();
@@ -22,5 +23,7 @@ router.get("/email", decryptEmail, sendFriend);
 router.put("/newfriend", decryptTextDataUser, addFriend);
 
 router.get("/friends", decryptEmail, sendFriends);
+
+router.patch("/removefriend", decryptTextDataUser, removeFriend);
 
 export default router;

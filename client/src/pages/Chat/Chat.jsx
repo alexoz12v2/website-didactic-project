@@ -52,7 +52,7 @@ const Chat = () => {
 
 	return (
 		<div className="app__chatbox">
-			<main style={{backgroundColor: "violet", height: "90%"}}>
+			<main className="chat__messageContainer">
 				<Message content="sdfafdhsafjdsafldaj" />
 				{ messageList?.length !== 0 && 
 					messageList.map((msg, id) => (<Message content={msg} key={id}/>))

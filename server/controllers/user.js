@@ -11,6 +11,30 @@ import mailData from "../maildata.js";
 import { privateKey } from "../keypair.js";
 import User from "../models/user.js";
 
+const getFriends = async (email) => {
+	console.log(email);
+	const user = await User.findByUsername(email);
+	if (!user)
+		throw new Error(`Couldn't find any user with email ${email}`);
+	
+	console.log("friend list ids");
+	console.log(user.friends);
+	const friendsDisplayData = [];
+	for (const index in user.friends)
+	{
+		const friend = await User.findById(new Types.ObjectId(user.friends[index]));
+		if (!friend)
+			throw new Error(`Couldn't find any user with email ${email}`);
+
+		friendsDisplayData.push({ 
+			name: friend.name,
+			email: friend.email,
+			avatarURL: `${process.env.BACKEND_URL}:${process.env.PORT}/api/image/${user.avatar.id}`,
+		});
+	}
+	return friendsDisplayData;
+}
+
 export const getUsers = async (req, res) => {
 	try {
 		const users = await User.find();
@@ -65,6 +89,9 @@ export const sendUser = async (req, res, next) => {
 			});
 			return;
 		}
+
+		// popola amici
+		const friendsDisplayData = await getFriends(user.email);
 		
 		// genera csrfToken (cookie con nome "csrfToken"), usato nel frontend state
 		// lo mette in automatico in res.cookie
@@ -77,7 +104,7 @@ export const sendUser = async (req, res, next) => {
 				email: user.email,
 				//avatar: "https://wallpapers.com/images/featured/87h46gcobjl5e4xu.jpg", // TODO
 				avatar: `${process.env.BACKEND_URL}:${process.env.PORT}/api/image/${user.avatar.id}`,
-				friends: user.friends,
+				friends: friendsDisplayData,
 			},
 			token: csrfToken,
 		});
@@ -190,6 +217,13 @@ export const decryptTextDataUser = (req, res, next) => {
 			req.body[elem.name] = elem.value;
 		});
 	}
+	else
+	{
+		req.body = {
+			...req.body,
+			...decryptedObj,
+		};
+	}
 	delete req.body.encryptedText;
 
 	//res.set('Access-Control-Allow-Origin', 'https://localhost:3000'); <-- setting headers before a redirect doesn't work
@@ -204,6 +238,7 @@ export const findByAvatarIdUser = async (id) => {
 };
 
 export const decryptEmail = (req, res, next) => {
+	console.log("2222222222222222222222222222222222222222222222222222222222");
 	const key = { 
 		key: privateKey, 
 		padding: cryptoConstants.RSA_PKCS1_OAEP_PADDING,
@@ -250,11 +285,13 @@ export const addFriend = async (req, res, next) => {
 			throw new Error(`Couldn't find any user with email ${req.body.email}`);
 
 		user.friends.push(friend._id);
-		const csrfToken = req.csrfToken();
 		await user.save();
+
+		friend.friends.push(user._id);
+		await friend.save();
+
 		res.status(200).json({
 			message: "friend added",
-			token: csrfToken,
 		});
 	} catch (err) {
 		next(err);
@@ -263,27 +300,39 @@ export const addFriend = async (req, res, next) => {
 
 export const sendFriends = async (req, res, next) => {
 	try {
-		const user = await User.findByUsername(req.body.email);
-		if (!user)
-			throw new Error(`Couldn't find any user with email ${req.body.email}`);
-		
-		const friendsDisplayData = [];
-		for (const friendID in user.friends)
-		{
-			const friend = await User.findOne({_id: friendID});
-			if (!friend)
-				throw new Error(`Couldn't find any user with email ${req.body.email}`);
-
-			friendsDisplayData.push({ 
-				name: friend.name,
-				avatarURL: `${process.env.BACKEND_URL}:${process.env.PORT}/api/image/${user.avatar.id}`,
-			});
-		}
-
+		console.log("6666666666666666666666666666666666666666666666666666666666666666666666666666");
+		console.log(req.body.email);
+		const friendsDisplayData = await getFriends(req.body.email);
+		console.log(friendsDisplayData);
 		const csrfToken = req.csrfToken();
 		res.status(200).json({
 			friends: friendsDisplayData,
 			token: csrfToken,
+		});
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const removeFriend = async (req, res, next) => {
+	try {
+		const user = await User.findByUsername(req.body.userEmail);
+		if (!user)
+			throw new Error(`Couldn't find any user with email ${req.body.email}`);
+		
+		const index = user.friends.findIndex(async (friendID) => {
+			const friend = await User.findById(friendID);
+			if (!friend)
+				throw new Error(`Couldn't find any user with email ${req.body.email}`);
+
+			return friend.email !== req.body.friendEmail;
+		});
+
+		user.friends.splice(index, 1);
+		console.log(user.friends)
+		await user.save();
+		res.status(200).json({
+			message: "removed",
 		});
 	} catch (err) {
 		next(err);

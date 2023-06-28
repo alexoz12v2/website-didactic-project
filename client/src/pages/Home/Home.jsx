@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { encode as uint8ToBase64 } from "uint8-to-base64";
 
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
@@ -20,14 +20,9 @@ const encryptData = async (encoder, key, data) => {
 const Home = () => {
 	const [ hidden, setHidden ] = useState(true);
 	const { state, dispatch } = useStore();
-	const [ friendCallbackCheckpoint, setFriendCallbackCheckpoint ] = useState(0);
 	const searchFriend = e => {
 		setHidden(() => false);
 	};
-
-	useEffect(() => {
-
-	}, [friendCallbackCheckpoint]);
 
 	const queryFriend = async (e) => {
 		e.preventDefault();
@@ -40,8 +35,8 @@ const Home = () => {
 			return;
 		}
 
-		console.log(state.user.friends.filter(friend => friend.email !== e.target.elements.email.value));
-		if (state.user.friends.filter(friend => friend.email !== e.target.elements.email.value).length !== 0)
+		console.log(state.user.friends.filter(friend => friend.email === e.target.elements.email.value));
+		if (state.user.friends.filter(friend => friend.email === e.target.elements.email.value).length !== 0)
 		{
 			console.log("hai gia' questo amico");
 			return;
@@ -75,16 +70,11 @@ const Home = () => {
 
 			console.log("checkpoint 1");
 			const requestData = await encryptData(encoder, key, {userEmail: state.user.email, friendEmail: e.target.elements.email.value});
-			response = await addFriend(requestData, state.token);
-			dispatch({type: "token", payload: { token: response.data.token }});
-			console.log(state.token);
-			console.log(response.data.token);
+			response = await addFriend(requestData, response.data.token);
 
 			console.log("checkpoint 2");
-			response = await getFriends(encryptedEmail);
-			dispatch({type: "token", payload: { token: response.data.token }});
-			console.log(state.token);
-			console.log(response.data.token);
+			const encryptedUserEmail = await encryptData(encoder, key, state.user.email);
+			response = await getFriends(encryptedUserEmail);
 
 			const action = {
 				type: "displayFriend",
@@ -92,8 +82,12 @@ const Home = () => {
 					friends: response.data.friends,
 				},
 			}
-
 			dispatch(action);
+
+			dispatch({type: "token", payload: { token: response.data.token }});
+			console.log(state.token);
+			console.log(response.data.token);
+
 		} catch (err) {
 			console.error(err);
 		}

@@ -79,3 +79,13 @@ export function getFriends(encryptedEmail) {
 		withCredentials: true,
 	});
 };
+
+export function removeFriend(encryptedData) {
+	return axios.patch(`${BACKEND_URL}/user/removefriend`, encryptedData, {
+		headers: {
+			"Content-Type": "application/json",
+		},
+		responseType: "json",
+		withCredentials: true,
+	});
+}

@@ -5,8 +5,10 @@
     border: 1px solid #ccc;
     margin-bottom: 10px;
     border-radius: 5px;
-	height: 10%;
-	background-color: rgb(120,120,120);
+    height: 50px;
+    width: 100%;
+    background-color: rgb(120,120,120);
+    cursor: pointer;
 }
  
 .contact__image {

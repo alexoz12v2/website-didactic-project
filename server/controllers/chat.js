@@ -81,10 +81,6 @@ export const getMessages = async (req, res, next) => {
 		{ id: [ user2._id, user1._id ] },
 	]);
 
-	console.log(chat);
-	console.log(chat.messages);
-	console.log(!chat.messages);
-	console.log(!(chat.messages))
 	if (!chat || !(chat?.messages)) {
 		return res.status(404).json({
 			success: false,

@@ -23,3 +23,8 @@
 	border-radius: 100%;
 	height: 15%;
 }
+
+.chat__messageContainer {
+	background-image: url("../../assets/sfondoChat.png");
+	height: 90%;
+}
