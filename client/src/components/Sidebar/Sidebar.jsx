@@ -3,10 +3,13 @@ import { useNavigate } from "react-router-dom";
 
 import Header from "../Header/Header";
 import Contact from "../Contact/Contact";
+import { useStore } from "../../AppContext";
 import "./Sidebar.css";
 
 const Sidebar = ({ user }) => {
 	const navigate = useNavigate();
+	const { state } = useStore();
+
 	const goHome = e => {
 		navigate("/");
 	};
@@ -25,6 +28,14 @@ const Sidebar = ({ user }) => {
 					last: "rossi",
 				},
 			}} />
+			{ (state.user && state.user.friends && state?.user?.friends?.length !== 0) ? (
+				state.user.friends.map((friend, idx) => (
+					<Contact key={idx} user={{
+						avatar: friend.avatarURL,
+						name: friend.name,
+					}} />
+				))
+			) : null}		
 		</div>
 	);
 };

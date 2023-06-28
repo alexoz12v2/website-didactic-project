@@ -45,6 +45,8 @@ export function getUserInfoByEmail(encryptedEmail) {
 		params: {
 			v: encryptedEmail,
 		},
+		validateStatus: status => ((status >= 200 && status < 300) || status === 404),
+		withCredentials: true,
 	});
 };
 
@@ -58,3 +60,22 @@ export function postNewUserData(formData) {
 	});
 };
 
+export function addFriend(encryptedObj, token) {
+	return axios.put(`${BACKEND_URL}/user/newfriend`, {encryptedText: encryptedObj, _csrf: token}, {
+		headers: {
+			"Content-Type": "application/json",
+		},
+		responseType: "json",
+		withCredentials: true,
+	});
+};
+
+export function getFriends(encryptedEmail) {
+	return axios.get(`${BACKEND_URL}/user/friends`, {
+		params: {
+			v: encryptedEmail,
+		},
+		responseType: "json",
+		withCredentials: true,
+	});
+};

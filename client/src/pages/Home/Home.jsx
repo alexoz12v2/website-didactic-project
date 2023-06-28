@@ -1,22 +1,52 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { encode as uint8ToBase64 } from "uint8-to-base64";
 
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import CloseIcon from '@mui/icons-material/Close';
 
-import { getNonce, getUserInfoByEmail } from "../../api/";
+import { getNonce, getUserInfoByEmail, addFriend, getFriends } from "../../api/";
+import { useStore } from "../../AppContext";
 
 import "./Home.css";
 
+const encryptData = async (encoder, key, data) => {
+	data = encoder.encode(JSON.stringify(data));
+	let encryptedData = await window.crypto.subtle.encrypt({name: "RSA-OAEP"}, key, data);
+	encryptedData = new Uint8Array(encryptedData);
+	const b64encoded = uint8ToBase64(encryptedData);
+	return b64encoded;
+}
+
 const Home = () => {
-	const [hidden, setHidden] = useState(true);
+	const [ hidden, setHidden ] = useState(true);
+	const { state, dispatch } = useStore();
+	const [ friendCallbackCheckpoint, setFriendCallbackCheckpoint ] = useState(0);
 	const searchFriend = e => {
 		setHidden(() => false);
 	};
 
+	useEffect(() => {
+
+	}, [friendCallbackCheckpoint]);
+
 	const queryFriend = async (e) => {
 		e.preventDefault();
 		e.stopPropagation();
+
+		// check preliminari: 1) devi essere loggato. 2) non deve essere amico
+		if (!state.user)
+		{
+			console.log("non sei loggato");
+			return;
+		}
+
+		console.log(state.user.friends.filter(friend => friend.email !== e.target.elements.email.value));
+		if (state.user.friends.filter(friend => friend.email !== e.target.elements.email.value).length !== 0)
+		{
+			console.log("hai gia' questo amico");
+			return;
+		}
+
 		const encoder = new TextEncoder("utf8");
 		
 		try {
@@ -26,15 +56,44 @@ const Home = () => {
 
 			const keyToImport = response.data.nonce;
 			const key = await window.crypto.subtle.importKey("jwk", keyToImport, {name: "RSA-OAEP", hash: {name: "SHA-256"}}, false, ["encrypt"]);
+			console.log(state.token);
 
-			const data = encoder.encode(JSON.stringify(e.target.elements.email.value));
-			let encryptedData = await window.crypto.subtle.encrypt({name: "RSA-OAEP"}, key, data);
-			encryptedData = new Uint8Array(encryptedData);
-			const b64encoded = uint8ToBase64(encryptedData);
+			const encryptedEmail = await encryptData(encoder, key, e.target.elements.email.value);
 
-			response = await getUserInfoByEmail(b64encoded);
-			console.log(response.data);
+			console.log("checkpoint 0");
+			response = await getUserInfoByEmail(encryptedEmail);
+			dispatch({type: "token", payload: { token: response.data.token }});
+			console.log(state.token);
+			console.log(response.data.token);
+			//const friendDisplayData = response.data;
 
+			if (response.status === 404)
+			{
+				console.log(`Non e' stato trovato un utente con email ${e.target.elements.email.value}`);
+				return;
+			}
+
+			console.log("checkpoint 1");
+			const requestData = await encryptData(encoder, key, {userEmail: state.user.email, friendEmail: e.target.elements.email.value});
+			response = await addFriend(requestData, state.token);
+			dispatch({type: "token", payload: { token: response.data.token }});
+			console.log(state.token);
+			console.log(response.data.token);
+
+			console.log("checkpoint 2");
+			response = await getFriends(encryptedEmail);
+			dispatch({type: "token", payload: { token: response.data.token }});
+			console.log(state.token);
+			console.log(response.data.token);
+
+			const action = {
+				type: "displayFriend",
+				payload: {
+					friends: response.data.friends,
+				},
+			}
+
+			dispatch(action);
 		} catch (err) {
 			console.error(err);
 		}

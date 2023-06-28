@@ -184,9 +184,12 @@ export const decryptTextDataUser = (req, res, next) => {
 	// decode buffer in [{"name":"username","value":"<unknown>"},{"name":"password","value":"<unknown>"},{"name":"login","value":"Login"}] and remove the login button
 	const decryptedObj = JSON.parse(decryptedData.toString("utf-8"));
 	console.log(decryptedObj);
-	decryptedObj.forEach(elem => {
-		req.body[elem.name] = elem.value;
-	});
+	if (decryptedObj.forEach)
+	{
+		decryptedObj.forEach(elem => {
+			req.body[elem.name] = elem.value;
+		});
+	}
 	delete req.body.encryptedText;
 
 	//res.set('Access-Control-Allow-Origin', 'https://localhost:3000'); <-- setting headers before a redirect doesn't work
@@ -219,11 +222,68 @@ export const sendFriend = async (req, res, next) => {
 	try {
 		const user = await User.findByUsername(req.body.email);
 		if (!user)
-			throw new Error(`Couldn't find any user with email ${req.body.email}`)
+			throw new Error(`Couldn't find any user with email ${req.body.email}`);
 
+		const csrfToken = req.csrfToken();
 		res.status(200).json({
 			name: user.name,
 			avatarURL:`${process.env.BACKEND_URL}:${process.env.PORT}/api/image/${user.avatar.id}`,
+			token: csrfToken,
+		});
+	} catch (err) {
+		res.status(404).json({
+			message: "non esiste",
+		});
+	}
+};
+
+export const addFriend = async (req, res, next) => {
+	try {
+		console.log("ggggggggggggggggggggggggggggggggggggggggggggggggggggggg");
+		console.log(req.body);
+		const user = await User.findByUsername(req.body.userEmail);
+		if (!user)
+			throw new Error(`Couldn't find any user with email ${req.body.email}`);
+		
+		const friend = await User.findByUsername(req.body.friendEmail);
+		if (!friend)
+			throw new Error(`Couldn't find any user with email ${req.body.email}`);
+
+		user.friends.push(friend._id);
+		const csrfToken = req.csrfToken();
+		await user.save();
+		res.status(200).json({
+			message: "friend added",
+			token: csrfToken,
+		});
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const sendFriends = async (req, res, next) => {
+	try {
+		const user = await User.findByUsername(req.body.email);
+		if (!user)
+			throw new Error(`Couldn't find any user with email ${req.body.email}`);
+		
+		const friendsDisplayData = [];
+		for (const friendID in user.friends)
+		{
+			const friend = await User.findOne({_id: friendID});
+			if (!friend)
+				throw new Error(`Couldn't find any user with email ${req.body.email}`);
+
+			friendsDisplayData.push({ 
+				name: friend.name,
+				avatarURL: `${process.env.BACKEND_URL}:${process.env.PORT}/api/image/${user.avatar.id}`,
+			});
+		}
+
+		const csrfToken = req.csrfToken();
+		res.status(200).json({
+			friends: friendsDisplayData,
+			token: csrfToken,
 		});
 	} catch (err) {
 		next(err);

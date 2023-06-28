@@ -19,6 +19,14 @@ const reducer = (state, action) => {
 				...state,
 				token: action.payload.token || state.token,
 			};
+		case "displayFriend":
+			return {
+				token: state.token,
+				user: {
+					...state.user,
+					friends: action.payload.friends || state.user.friends,
+				},
+			};	
 		default: 
 			return state;
 	}
