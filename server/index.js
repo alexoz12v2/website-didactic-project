@@ -101,6 +101,10 @@ function createServer() {
     app.use("/auth", authRoutes);
     app.use("/api", apiRoutes);
 
+    //app.get("/", (req, res) => {
+    //    res.json({msg: "Continuous connection"});
+    //})
+
     // error handler globale
     app.use((err, req, res, next) => {
 	console.error(err.stack);
@@ -119,16 +123,16 @@ function createServer() {
     const server = https.createServer({ key, cert }, app);
 
     // real time chat
-    const io = createSocketIO(server);
+    const io = createSocketIO(server, corsOptions);
 
-    return server;
+    return [server, io];
 }
 
 const PORT = process.env.PORT || 5000;
 
 mongoose.connect(process.env.DATABASE_URL)
     .then(connection => {
-	const server = createServer(connection);
+	const [server, io] = createServer(connection);
 	server.listen({port: PORT, host: "127.0.0.1",}, console.log(`server running on port: ${PORT}`))
     }).catch(err => {
 	console.error(err);

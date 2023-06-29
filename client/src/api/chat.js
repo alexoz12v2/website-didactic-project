@@ -1,6 +1,5 @@
 import axios from "axios";
 import { encode as uint8ToBase64 } from "uint8-to-base64";
-//import { io } from "socket.io-client";
 
 import { BACKEND_URL } from "../constants.js";
 import { getNonce } from "./user.js";
@@ -31,8 +30,6 @@ export const getMessages = async (email1, email2) => {
 	console.log("endryfsdafdhsaf");
 	encryptedData = new Uint8Array(encryptedData);
 	encryptedData = uint8ToBase64(encryptedData);
-
-	//io(`${BACKEND_URL}/chat/all?v=${encryptedData}`);
 
 	return axios.get(`${BACKEND_URL}/chat/all`, {
 		withCredentials: true,
