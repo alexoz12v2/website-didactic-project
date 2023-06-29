@@ -13,6 +13,7 @@ const reducer = (state, action) => {
 			return {
 				user: action.payload.user || state.user,
 				token: action.payload.token || state.token,
+				selectedFriendEmail: null,
 			};
 		case "token":
 			return {
@@ -21,12 +22,18 @@ const reducer = (state, action) => {
 			};
 		case "displayFriend":
 			return {
-				token: state.token,
+				...state,
 				user: {
 					...state.user,
 					friends: action.payload.friends || state.user.friends,
 				},
-			};	
+				selectedFriendEmail: null,
+			};
+		case "selectFriend":
+			return {
+				...state,
+				selectedFriendEmail: action.payload.friendEmail || state.selectedFriendEmail,
+			};
 		default: 
 			return state;
 	}
@@ -45,6 +52,7 @@ const App = () => {
 				friends: [],
 		},*/
 		token: null,
+		selectedFriendEmail: null, /*string*/
 	});
 
 	useEffect(() => {
@@ -60,16 +68,6 @@ const App = () => {
 			console.log(err);
 		});
 	}, []);
-
-	const chatElement = () => {
-		if (state.user) {
-			console.log(`render! ${!!state.user}`)
-			return (<Chat />) 
-		}
-		else {
-			return (<Navigate to="/" />);
-		}
-	}
 
 	const router = createBrowserRouter([
 		{
@@ -90,11 +88,11 @@ const App = () => {
 				},
 				{
 					path: "/chat",
-					element: chatElement(),
+					element: state?.user ? (<Chat />) : (<Navigate to="/" />),
 				},
 				{
 					path: "/profile",
-					element: state.user ? (<Profile />) : (<Navigate to="/" />),
+					element: state?.user ? (<Profile />) : (<Navigate to="/" />),
 				},
 				{
 					path: "/a",

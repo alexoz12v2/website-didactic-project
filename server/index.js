@@ -16,6 +16,7 @@ import hsts from "hsts";
 import expressEnforcesSSL from "express-enforces-ssl";
 import helmet from "helmet";
 import "./passport.js";
+import createSocketIO from "./socketio.js";
 
 // TODO import routes
 import userRoutes from "./routes/user.js";
@@ -116,6 +117,10 @@ function createServer() {
     const cert = fs.readFileSync('../CA/server/server.pem');
 
     const server = https.createServer({ key, cert }, app);
+
+    // real time chat
+    const io = createSocketIO(server);
+
     return server;
 }
 

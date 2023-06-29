@@ -1,0 +1,9 @@
+.chat__message {
+	width: 55%;
+	margin-top: 20px;
+	background-color: #fffed5;
+	font-family: var(--font-family-base);
+	font-size: 14px;
+	color: black;
+	border-radius: 3px;
+}

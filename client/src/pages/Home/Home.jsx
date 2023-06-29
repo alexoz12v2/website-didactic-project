@@ -28,13 +28,6 @@ const Home = () => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		// check preliminari: 1) devi essere loggato. 2) non deve essere amico
-		if (!state.user)
-		{
-			console.log("non sei loggato");
-			return;
-		}
-
 		console.log(state.user.friends.filter(friend => friend.email === e.target.elements.email.value));
 		if (state.user.friends.filter(friend => friend.email === e.target.elements.email.value).length !== 0)
 		{
@@ -103,17 +96,22 @@ const Home = () => {
 			<span>
 		Benvenuto su BuddyBuzz! Chatta senza limiti, ridi senza sosta: qui sei sempre in buona compagnia! Cosa aspetti? <strong>Clicca qua sotto</strong>, aggiungi i tuoi amici e avvia una conversazione con loro.
 			</span>
-			<PersonAddIcon sx={{
-				color: "white",
-				fontSize: "600%",
-				border: "3px solid white",
-				borderRadius: 100,
-			}} onClick={searchFriend}/>
-			<form onSubmit={queryFriend} className={"home__form " + (hidden ? "hidden" : "")}>
-				<input type="text" name="email" placeholder="inserisci email amico" />
-				<input type="submit" value="cerca" />
-				<CloseIcon onClick={closeSearch}/>
-			</form>
+		{state?.user ? 
+			(<>
+				<PersonAddIcon sx={{
+					color: "white",
+					fontSize: "600%",
+					border: "3px solid white",
+					borderRadius: 100,
+				}} onClick={searchFriend}/>
+				<form onSubmit={queryFriend} className={"home__form " + (hidden ? "hidden" : "")}>
+					<input type="text" name="email" placeholder="inserisci email amico" />
+					<input type="submit" value="cerca" />
+					<CloseIcon onClick={closeSearch}/>
+				</form>
+			</>) 
+			: null
+		}
 		</div>
 	);
 };

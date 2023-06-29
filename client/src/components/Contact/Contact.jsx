@@ -1,19 +1,21 @@
 import { useNavigate } from "react-router-dom";
 import CloseIcon from '@mui/icons-material/Close';
 
-// import { useStore } from "../../AppContext";
+import { useStore } from "../../AppContext";
 
 import "./Contact.css";
 
 // TODO work with store
 const Contact = ({user, preOnClickHook, style, removeFriend}) => {
 	const navigate = useNavigate();
-	//const { state } = useStore();
+	const { dispatch } = useStore();
 	const callback= e => {
 		if (preOnClickHook) { 
 			console.log("gggggggggggggggggggggggggggggggggggggggggggg");
 			preOnClickHook();
 		}
+
+		dispatch({ type: "selectFriend", payload: { friendEmail: user.email, }, });
 		navigate("/chat");
 	};
 

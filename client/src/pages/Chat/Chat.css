@@ -7,6 +7,8 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	background-color: #3d3901; 
+	flex: 1;
 }
 
 .app__chatbox [name="message"] {
@@ -16,7 +18,9 @@
 }
 
 .app__chatbox [name="message"]::placeholder {
-	color: red;
+	color: #fdca00;
+	font-family: var(--font-family-base);
+	font-size: 14px;
 }
 
 .app__chatbox input[name="send"] {
@@ -25,6 +29,9 @@
 }
 
 .chat__messageContainer {
+	display: flex;
+	flex-direction: column;
 	background-image: url("../../assets/sfondoChat.png");
 	height: 90%;
 }
+

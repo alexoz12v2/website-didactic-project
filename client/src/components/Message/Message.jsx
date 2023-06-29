@@ -1,11 +1,13 @@
+import "./Message.css";
 
-const Message = ({ content }) => {
+const Message = ({ placement, content }) => {
 	return (
-		<div style={{
-			
-			width: "55%",
+		<div className="chat__message" style={{
+			alignSelf: placement,
 		}}>
+			<div style={{margin: "5px"}}>
 			{ content }
+			</div>
 		</div>
 	);
 }
