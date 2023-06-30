@@ -33,5 +33,6 @@
 	flex-direction: column;
 	background-image: url("../../assets/sfondoChat.png");
 	height: 90%;
+	overflow-y: scroll;
 }
 

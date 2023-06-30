@@ -113,9 +113,11 @@ const Chat = () => {
 					transports: ["websocket"],
 				});
 
-				socket.on(`chat:${encryptedChat}:${encryptedSender}:receive`, msg => {
-					console.log(`The message is: ${msg}`);
-				})
+				socket.on(`chat:${encryptedChat}:${encryptedSender}:receive`, msgs => {
+					console.log(`messages arrived: `);
+					console.log(msgs);
+					setMessageList(old => [ ...old, ...msgs ]);
+				});
 
 				setC(() => {
 					return {
@@ -137,7 +139,7 @@ const Chat = () => {
 			</main>
 			<form>
 				<input type="hidden" name="_csrf" value={state.token} />
-				<textarea style={{backgroundColor: "#202020"}} ref={textRef} name="message" placeholder="type your message" />
+				<textarea style={{backgroundColor: "#202020",color:"#fdca00"}} ref={textRef} name="message" placeholder="type your message" />
 				<SendIcon sx={{
 					marginLeft: "20px",
 					transform: "scale(2)",

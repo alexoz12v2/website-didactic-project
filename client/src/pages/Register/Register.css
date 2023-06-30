@@ -1,0 +1,46 @@
+.app__registration_box {
+	grid-column-start: 1;
+	grid-column-end: span 3;
+	grid-row-start: 1;
+	grid-row-end: span 3;
+}
+
+.app__registration_box {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	font-size: 2em;
+	top: 18vh; /*overrides align-items: center of its parent*/
+	color: lightgray;
+	font-weight: bold;
+	text-align: center;
+}
+
+ .app__registration_box input,
+ .app__registration_box label {
+	padding: 15px 20px;
+	font-size: 18px;
+  	font-family: var(--font-family-base);
+	margin: auto;
+}
+
+.app__registration_box label {
+	width: 60%;
+	height: 70px;
+	border: 1px solid black;
+	background: rgb(170,170,170);
+	background: radial-gradient(circle, rgba(200,200,200,1) 0%, rgba(170,170,170,1) 100%);
+}
+
+.app__registration_box input {
+	width: 60%;
+}
+
+ .app__registration_box form {
+	width: 50%;
+	height: calc(100% - 40px);
+	margin-top: 40px;
+	margin: auto;
+	display: flex;
+	flex-direction: column;
+	align-items: space-between;
+}

@@ -11,10 +11,6 @@ import Google from "../../assets/google.png";
 import GitHub from "../../assets/github.png";
 import "./Authentication.css";
 
-// TODO refactor codice ripetuto
-// TODO password criptata
-// TODO cambia il post action nel form
-// TODO refactor prop
 const Authentication = () => {
 	const { state, dispatch } = useStore();
 	const redirect = (toUrl) => { // fai la richiesta di autenticazione tramite google alla route del backend che ha come middleware 
@@ -46,7 +42,7 @@ const Authentication = () => {
 
 	return (
 		<>
-			<h1 className="app__login-title">Choose a Login Method</h1>
+			<h1 className="app__login-title">Scegli un metodo di Autenticazione</h1>
 			<div className="app__login-left-box">
 				<div className="app__login-button google" onClick={redirect("auth/google")}>
 					<img src={Google} alt="" className="icon" />

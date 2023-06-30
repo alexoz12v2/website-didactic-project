@@ -71,14 +71,12 @@ export const decryptData = (req, res, next) => {
 
 export const getMessages = async (req, res, next) => {
 	const { email1, email2 } = req.body.emails;
-	let change = false;
 	const user1 = await User.findByUsername(email1);
 	const user2 = await User.findByUsername(email2);
 
 	let chat = await Chat.findOne({ id: [ user1._id, user2._id ] });
 	if (!chat) {
 		chat = await Chat.findOne({ id: [ user2._id, user1._id ] });
-		change = true;
 	}
 
 	if (!chat || !(chat?.messages)) {
@@ -93,3 +91,55 @@ export const getMessages = async (req, res, next) => {
 	}));
 };
 
+export const getMessagesData = async (email1, email2) => {
+	const user1 = await User.findByUsername(email1);
+	const user2 = await User.findByUsername(email2);
+
+	let chat = await Chat.findOne({ id: [ user1._id, user2._id ] });
+	if (!chat) {
+		chat = await Chat.findOne({ id: [ user2._id, user1._id ] });
+	}
+
+	if (!chat || !(chat?.messages)) {
+		return [];
+	}
+
+	return chat.messages.map(msg => { return { sender: msg.authorEmail, content: msg.content }; });
+};
+
+export const createMessageRT = async (from, to, msgContent) => {
+	console.log("received request");
+	try {
+		console.log(`from: ${from}`);
+		console.log(`to: ${to}`);
+
+		const sender = await User.findByUsername(from);
+		const receiver = await User.findByUsername(to);
+
+		if (!sender || !receiver) {
+			console.log("throwing error");
+			throw new Error("couldn't find sender or receiver");
+		}
+
+		let chat = await Chat.findOne({ id: [ sender._id, receiver._id ] });
+		
+		if (!chat) {
+			chat = await Chat.findOne({ id: [ receiver._id, sender._id ] });
+		}
+
+		if (!chat) {
+			console.log("didn't find any existing chat, creating new...");
+			chat = await createNewChat(sender, receiver);
+		}
+
+		chat.messages.push({
+			authorEmail: sender.email,
+			content: msgContent,
+			dateSent: Date.now(),
+		});
+
+		await chat.save();
+	} catch (error) {
+		console.error(error);
+	}
+};

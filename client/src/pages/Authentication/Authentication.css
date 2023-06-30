@@ -61,6 +61,7 @@
   padding: 15px 20px;
   margin-bottom: 40px;
   font-size: 18px;
+  font-family: var(--font-family-base);
 }
 
 input.submit {

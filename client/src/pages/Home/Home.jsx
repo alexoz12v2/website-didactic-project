@@ -94,7 +94,8 @@ const Home = () => {
 		<div className="app__home--container" style={{
 		}}>
 			<span>
-		Benvenuto su BuddyBuzz! Chatta senza limiti, ridi senza sosta: qui sei sempre in buona compagnia! Cosa aspetti? <strong>Clicca qua sotto</strong>, aggiungi i tuoi amici e avvia una conversazione con loro.
+		Benvenuto su BuddyBuzz! Chatta senza limiti, ridi senza sosta: qui sei sempre in buona compagnia! Cosa aspetti?
+		{state?.user ? <strong>Clicca qua sotto</strong> : null} {state?.user ? ", aggiungi i tuoi amici e avvia una conversazione con loro." : ""}
 			</span>
 		{state?.user ? 
 			(<>

@@ -18,12 +18,14 @@
 
 	margin: auto auto;
 	width: 85%;
-	height: 95%;
-
+	height: calc(0.95 * 100vh);
+	overflow: hidden;
 }
 
 .app__chatbox {
 	background-color: white;
+	overflow: hidden;
+	height: 90.25vh;
 }
 
 .app__main-window-header {
@@ -33,6 +35,7 @@
 	font-size: 1.5em;
 	font-weight: bold;
 	padding: 10px;
+	overflow: hidden;
 }
 
 .link {

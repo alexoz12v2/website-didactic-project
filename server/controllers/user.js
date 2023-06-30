@@ -3,7 +3,7 @@ import express from "express";
 import mongoose, { Types } from "mongoose";
 import { config } from "dotenv";
 config();
-import nodemailer from "nodemailer";
+//import nodemailer from "nodemailer";
 import { privateDecrypt, constants as cryptoConstants } from "crypto";
 import { open } from "fs/promises";
 
@@ -114,15 +114,15 @@ export const sendUser = async (req, res, next) => {
 };
 
 const oauthCommonCallback = async(firstName, lastName, email/*, avatar*/, done) => {
-	const transporter = nodemailer.createTransport({
-		port: 465, // default
-		host: "smtp.gmail.com",
-		auth: {
-			user: mailData.email,
-			pass: mailData.password,
-		},
-		secure: true,
-	});
+//	const transporter = nodemailer.createTransport({
+//		port: 465, // default
+//		host: "smtp.gmail.com",
+//		auth: {
+//			user: mailData.email,
+//			pass: mailData.password,
+//		},
+//		secure: true,
+//	});
 
 	const length = 10;
 	const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -146,12 +146,12 @@ const oauthCommonCallback = async(firstName, lastName, email/*, avatar*/, done) 
 			friends: [],
 		});
 
-		await transporter.sendMail({
-			from: mailData.email,
-			to: email,
-			subject: "Buddy Buzz automatic registration password",
-			text: `your automatically generated password is ${password}`, // TODO secure??
-		});
+		//await transporter.sendMail({
+		//	from: mailData.email,
+		//	to: email,
+		//	subject: "Buddy Buzz automatic registration password",
+		//	text: `your automatically generated password is ${password}`,
+		//});
 		
 		// metodo register passato da mongoose
 		await User.register(userDoc, password);
