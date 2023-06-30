@@ -7,7 +7,7 @@ config();
 import { privateDecrypt, constants as cryptoConstants } from "crypto";
 import { open } from "fs/promises";
 
-import mailData from "../maildata.js";
+//import mailData from "../maildata.js";
 import { privateKey } from "../keypair.js";
 import User from "../models/user.js";
 
