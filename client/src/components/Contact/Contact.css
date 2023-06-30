@@ -15,6 +15,7 @@
     height: 80%;
     border-radius: 50%;
     margin-right: 10px;
+    object-fit: none;
 }
  
 .contact__name {

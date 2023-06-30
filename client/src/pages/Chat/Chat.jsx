@@ -11,53 +11,14 @@ import { getNonce } from "../../api/";
 
 import "./Chat.css"
 
-const chatIdentifier = async (email1, email2) => {
-	try {
-		const encoder = new TextEncoder("utf8");
-		const response = await getNonce();
-		if (response.status !== 200) 
-			throw new Error(`failed request with state ${response.status}`);
-
-		const keyToImport = response.data.nonce;
-		const key = await window.crypto.subtle.importKey("jwk", keyToImport, {name: "RSA-OAEP", hash: {name: "SHA-256"}}, false, ["encrypt"]);
-
-		const identifier = [ email1, email2 ];
-		identifier.sort();
-
-		let data = encoder.encode(JSON.stringify(identifier));
-		let encryptedData = await window.crypto.subtle.encrypt({name: "RSA-OAEP"}, key, data);
-
-		encryptedData = new Uint8Array(encryptedData);
-		encryptedData = uint8ToBase64(encryptedData);
-		const encryptedChat = encryptedData;
-
-		data = encoder.encode(JSON.stringify(email1));
-		encryptedData = await window.crypto.subtle.encrypt({name: "RSA-OAEP"}, key, data);
-		encryptedData = new Uint8Array(encryptedData);
-		encryptedData = uint8ToBase64(encryptedData);
-		const encryptedEmail = encryptedData;
-
-		data = encoder.encode(JSON.stringify(email2));
-		encryptedData = await window.crypto.subtle.encrypt({name: "RSA-OAEP"}, key, data);
-		encryptedData = new Uint8Array(encryptedData);
-		encryptedData = uint8ToBase64(encryptedData);
-		const encryptedSender = encryptedData;
-
-		return [encryptedChat, encryptedEmail, encryptedSender];
-	} catch (err) {
-		console.error(err);
-		return err;
-	}
-}
-
 let socket; 
 
 const Chat = () => {
-	const { state, dispatch } = useStore(); 
+	const { state } = useStore(); 
 	const [ messageList, setMessageList ] = useState([]);
 	const [con, setCon] = useState(false);
 	const textRef = useRef(null);
-	const [c, setC] = useState(null);
+	const [oldFriend, setOldFriend] = useState(null);
 
 	const submitMessage = async (e) => {
 		e.preventDefault();
@@ -71,9 +32,12 @@ const Chat = () => {
 			if (!state.selectedFriendEmail)
 				throw new Error("friend email is null");
 
-			const { chatId, userId, friendId } = c;
-			console.log(`chat:${chatId}:${friendId}:send`, msg);
-			socket.emit(`chat:${chatId}:${userId}:send`, msg); // TODO remove
+			const chatId = [state.user.email, state.selectedFriendEmail].sort().join();
+			const email = state.user.email;
+			const sender = state.selectedFriendEmail;
+
+			console.log(`chat:${chatId}:send`, msg);
+			socket.emit(`chat:${chatId}:send`, msg);
 
 			//const res = await postMessage({
 			//	from: state.user.email, 
@@ -95,40 +59,38 @@ const Chat = () => {
 	
 	useEffect(() => {
 		textRef.current.focus();
-		if (!state.selectedFriendEmail)
+		if (!state.selectedFriendEmail || !state.user.email)
 			return;
 
-		chatIdentifier(state.user.email, state.selectedFriendEmail)
-			.then(([encryptedChat, encryptedEmail, encryptedSender]) => {
-				console.log("connecting");
-				socket = io(`${BACKEND_URL}`, {
-					withCredentials: true,
-					query: {
-						v: encryptedChat,
-						e: encryptedEmail,
-						s: encryptedSender,
-					},
-					reconnectionAttempts: "Infinity",
-					timeout: 10000,
-					transports: ["websocket"],
-				});
+		const chatId = [state.user.email, state.selectedFriendEmail].sort();
+		const email = state.user.email;
+		const sender = state.selectedFriendEmail;
 
-				socket.on(`chat:${encryptedChat}:${encryptedSender}:receive`, msgs => {
-					console.log(`messages arrived: `);
-					console.log(msgs);
-					setMessageList(old => [ ...old, ...msgs ]);
-				});
+		console.log("connecting");
+		socket = io(`${BACKEND_URL}`, {
+			withCredentials: true,
+			query: {
+				v: chatId,
+				e: email,
+				s: sender,
+			},
+			reconnectionAttempts: "Infinity",
+			timeout: 10000,
+			transports: ["websocket"],
+		});
 
-				setC(() => {
-					return {
-						chatId: encryptedChat,
-						userId: encryptedEmail,
-						friendId: encryptedSender,
-					};
-				})
-				setCon(() => true);
-			})
-	}, []);
+		socket.on(`chat:${chatId}:receive`, msgs => {
+			console.log(`messages arrived: `);
+			console.log(msgs);
+			if (oldFriend && oldFriend !== state.selectedFriendEmail)
+				setMessageList(() => [ ...msgs ]);
+			else
+				setMessageList(old => [ ...old, ...msgs ]);
+		});
+
+		setCon(() => true);
+		setOldFriend(() => state.selectedFriendEmail);
+	}, [state.selectedFriendEmail]);
 
 	return (
 		<div className="app__chatbox">
@@ -139,7 +101,9 @@ const Chat = () => {
 			</main>
 			<form>
 				<input type="hidden" name="_csrf" value={state.token} />
-				<textarea style={{backgroundColor: "#202020",color:"#fdca00"}} ref={textRef} name="message" placeholder="type your message" />
+				<textarea onKeyPress={con ? e => {if(e.key === "Enter") return submitMessage(e);} : e => {e.preventDefault();e.stopPropagation();}}
+					style={{backgroundColor: "#202020",color:"#fdca00"}} ref={textRef} name="message" placeholder="type your message" 
+				/>
 				<SendIcon sx={{
 					marginLeft: "20px",
 					transform: "scale(2)",

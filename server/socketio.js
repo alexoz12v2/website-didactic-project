@@ -13,33 +13,23 @@ export default function(httpServer, corsOptions) {
     });
 
     io.on("connection", async (socket) => {
-	const key = { 
-		key: privateKey, 
-		padding: cryptoConstants.RSA_PKCS1_OAEP_PADDING,
-		oaepHash: 'sha256', 
-	};
-	let decryptedData = privateDecrypt(key, Buffer.from(socket.handshake.query.e, "base64"));
-	const email1 = JSON.parse(decryptedData.toString("utf-8"));
-	decryptedData = privateDecrypt(key, Buffer.from(socket.handshake.query.s, "base64"));
-	const email2 = JSON.parse(decryptedData.toString("utf-8"));
-	
-	console.log("3333333333333333333333333333333333333333333333333333");
-	console.log(`chat:${socket.handshake.query.v}:${socket.handshake.query.e}:send`);
+	const email1 = socket.handshake.query.e;
+	const email2 = socket.handshake.query.s;
+	const chatId = socket.handshake.query.v;
 
-	socket.on(`chat:${socket.handshake.query.v}:${socket.handshake.query.e}:send`, async (msgContent) => {
-	    console.log(msgContent);
+	socket.join(`chat:${chatId}`);
 
+	socket.on(`chat:${chatId}:send`, async (msgContent) => {
 	    await createMessageRT(email1, email2, msgContent);
 
-	    socket.emit(`chat:${socket.handshake.query.v}:${socket.handshake.query.s}:receive`, [{sender: email1, content: msgContent}]);
-	    socket.emit(`chat:${socket.handshake.query.v}:${socket.handshake.query.e}:receive`, [{sender: email1, content: msgContent}]);
+	    io.to(`chat:${chatId}`).emit(`chat:${chatId}:receive`, [{sender: email1, content: msgContent}]);
 	});
 
 	// invia la chat esistente tra socket.handshake.query.e e socket.handshake.query.s
 	const msgData = await getMessagesData(email1, email2);
 	if (msgData.length !== 0) {
 	    console.log(msgData);
-	    socket.emit(`chat:${socket.handshake.query.v}:${socket.handshake.query.s}:receive`, msgData);
+	    socket.emit(`chat:${chatId}:receive`, msgData);
 	}
     });
 

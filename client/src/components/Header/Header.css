@@ -29,6 +29,7 @@
 .app__sidebar-header-profile-icon--size {
 	height: 80%;
 	margin-right: 0.5em;
+    object-fit: none;
 }
 
 .app__sidebar-header-profile-icon--size ~ * {
